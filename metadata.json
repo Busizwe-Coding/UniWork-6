@@ -1,0 +1,6 @@
+{
+  "name": "Nuri Sushi",
+  "description": "Modern Japanese Minimalist sushi web app with menu ordering, seasonal specials, order tracking, kitchen management, and C# Visual Studio solution workspace.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
