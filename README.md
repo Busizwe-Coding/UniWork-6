@@ -11,8 +11,7 @@ Welcome to the official repository for **Nuri Sushi**, a modern, full-stack Japa
 - **Interactive Menu & Ordering:** Browse categorized Japanese dishes (rolls, nigiri, sashimi, bento boxes, ramen, and drinks) with real-time cart management.
 - **Online Checkout & Delivery Tracking:** Streamlined checkout workflow for delivery or pickup orders.
 - **Coupon & Promo Code System:** Apply valid discount codes at checkout for instant savings.
-- **Customer Feedback & Complaint Management:** Dedicated support system allowing users to file structured complaints with attached pictures.
-- **Admin Dashboard:** Order management, inventory oversight, and request approval workflows.
+- **Customer Feedback & Complaint Management:** Dedicated support system allowing users to file structured complaints with attached pictures. 
 
 ---
 
