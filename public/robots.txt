@@ -1,0 +1,12 @@
+# robots.txt for Nuri Sushi Ginza
+User-agent: *
+Allow: /
+Allow: /menu
+Allow: /offers
+Allow: /support
+Allow: /kitchen
+Allow: /csharp-solution
+
+# Disallow transient API routes and private staff tokens
+Disallow: /api/internal/
+Disallow: /admin/credentials/
