@@ -1,8 +1,8 @@
 # UniWork-6
 
-# Nuri Sushi - Online Ordering Web Application
+# Moori Sushi - Online Ordering Web Application
 
-Welcome to the official repository for **Nuri Sushi**, a modern, full-stack Japanese restaurant online ordering platform. This application allows customers to browse authentic sushi menus, customize orders, manage discount coupons, and submit feedback or picture-attached complaints seamlessly.
+Welcome to the official repository for **Moori Sushi**, a modern, full-stack Japanese restaurant online ordering platform. This application allows customers to browse authentic sushi menus, customize orders, manage discount coupons, and submit feedback or picture-attached complaints seamlessly.
 
 ---
 
