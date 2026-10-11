@@ -7,7 +7,7 @@ interface CheckoutModalProps {
   onClose: () => void;
   cart: CartItem[];
   discount: number;
-  onPlaceOrder: (order: Order) => void;
+  onPlaceOrder: (order: Order) => void | Promise<void>;
 }
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
@@ -20,11 +20,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   if (!isOpen) return null;
 
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'applepay' | 'cash'>('card');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const subtotal = cart.reduce((sum, i) => sum + i.sushiItem.price * i.quantity, 0);
   const deliveryFee = subtotal >= 500 || subtotal === 0 ? 0 : 50.00;
@@ -33,8 +33,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError('');
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const newOrder: Order = {
         id: `MOORI-${Math.floor(100000 + Math.random() * 900000)}`,
         createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -45,15 +46,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         total,
         status: 'Received',
         customerName: name,
-        email,
+        email: '',
         phone,
         deliveryAddress: address,
         paymentMethod,
         estimatedMinutes: 35
       };
 
-      setIsSubmitting(false);
-      onPlaceOrder(newOrder);
+      try {
+        await onPlaceOrder(newOrder);
+      } catch (err: any) {
+        setSubmitError(err?.message || 'Could not place your order. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     }, 1200);
   };
 
@@ -169,6 +175,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
         {/* Footer */}
         <div className="p-4 bg-[#f9f9f9] border-t border-[#e7bcb9]">
+          {submitError && (
+            <p role="alert" className="text-xs text-[#bc001f] bg-[#bc001f]/5 border border-[#bc001f]/30 px-3 py-2 mb-3">
+              {submitError}
+            </p>
+          )}
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}

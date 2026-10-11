@@ -1,5 +1,5 @@
 {
-  "name": "Nuri Sushi",
+  "name": "Moori Sushi",
   "description": "Modern Japanese Minimalist sushi web app with seasonal specials, real-time order tracking, kitchen KDS, customer support desk, and Visual Studio C# solution.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

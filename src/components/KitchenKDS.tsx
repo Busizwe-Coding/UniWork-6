@@ -22,7 +22,7 @@ export const KitchenKDS: React.FC<KitchenKDSProps> = ({ orders, onUpdateStatus }
         <div>
           <div className="flex items-center gap-2 text-[#bc001f] font-mono-caps text-xs">
             <ChefHat className="w-5 h-5" />
-            <span>NURI SUSHI KITCHEN DISPLAY SYSTEM (KDS)</span>
+            <span>MOORI SUSHI KITCHEN DISPLAY SYSTEM (KDS)</span>
           </div>
           <h2 className="font-display text-2xl font-extrabold mt-1">Master Chef Order Preparation Console</h2>
         </div>

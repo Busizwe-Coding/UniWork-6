@@ -67,7 +67,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Mascot Image from HTML Source */}
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuC82PwOqfk8e2LuH0uddBjY4Dpwys6XT0VeQBf7f5jUyr_w_yB-pgOChmOpoYQPBKwBfK0EVaxrcah2bMMW_zRsXLmIC7KVhRgKOmy15-r84raE7gbGXp7JNGNM5v1JbBDx9zmgpZ1KzirS5qOUxIMiSXikbH1spMesTnCaJVm0atylGPYGXVW2oly2w6SBZoNyQBeXYC200LS_C1GDApGvMWhjEoEwHYlqWZHMNAmBrUECMiotrDPOu--NuNOv9t8OEKS2809tvaG4"
-              alt="Nuri Sushi Ninja Salmon Mascot"
+              alt="Moori Sushi Ninja Salmon Mascot"
               className="w-[85%] h-auto drop-shadow-2xl z-10 animate-bounce-slow object-contain"
             />
           </div>

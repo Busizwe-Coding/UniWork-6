@@ -23,7 +23,7 @@ export const InnerCircle: React.FC = () => {
           </div>
 
           <h2 className="font-display text-3xl md:text-4xl font-extrabold text-[#1a1c1c]">
-            The Nuri Inner Circle
+            The Moori Inner Circle
           </h2>
 
           <p className="font-body text-[#5f5e5e] text-sm md:text-base leading-relaxed">
@@ -49,7 +49,7 @@ export const InnerCircle: React.FC = () => {
 
           {subscribed && (
             <p className="text-xs font-mono text-emerald-700 bg-emerald-50 p-2 border border-emerald-200 flex items-center justify-center gap-1">
-              <Check className="w-4 h-4" /> Welcome to the Nuri Inner Circle! Secret drops will arrive in your inbox.
+              <Check className="w-4 h-4" /> Welcome to the Moori Inner Circle! Secret drops will arrive in your inbox.
             </p>
           )}
 

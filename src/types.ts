@@ -36,6 +36,7 @@ export type OrderStatus = 'Received' | 'Kitchen' | 'Seared' | 'Delivery' | 'Deli
 export interface Order {
   id: string;
   createdAt: string;
+  createdAtMs?: number;
   items: CartItem[];
   subtotal: number;
   discount: number;

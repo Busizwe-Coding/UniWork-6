@@ -5,19 +5,13 @@ import fs from 'fs';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 
-// node:sqlite ships with Node >= 22.13 (no extra install needed)
-let DatabaseSync: typeof import('node:sqlite').DatabaseSync;
-try {
-  ({ DatabaseSync } = await import('node:sqlite'));
-} catch {
-  console.error('This server needs Node.js 22.13 or newer (built-in node:sqlite). Run "node -v" to check.');
-  process.exit(1);
-}
+import initSqlJs from 'sql.js';
+import { seasonalSpecials, fullMenu } from './src/data/sushiData';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3000;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
-const IS_PROD = process.env.NODE_ENV === 'production';
+const IS_PROD = process.env.NODE_ENV === 'production' || process.argv.includes('--prod');
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
 const COOKIE_NAME = 'moori_session';
 
@@ -26,12 +20,53 @@ const COOKIE_NAME = 'moori_session';
 /* -------------------------------------------------------------------------- */
 const dataDir = path.join(__dirname, 'data-store');
 fs.mkdirSync(dataDir, { recursive: true });
-const db = new DatabaseSync(path.join(dataDir, 'moori.db'));
+const dbFile = path.join(dataDir, 'moori.db');
+const SQL = await initSqlJs(); // pure WebAssembly SQLite: works on any Node version, nothing to compile
+const raw = fs.existsSync(dbFile) ? new SQL.Database(fs.readFileSync(dbFile)) : new SQL.Database();
+
+function persist() {
+  const tmp = `${dbFile}.tmp`;
+  fs.writeFileSync(tmp, Buffer.from(raw.export()));
+  fs.renameSync(tmp, dbFile);
+}
+
+// Tiny wrapper so the rest of the code can use db.prepare(sql).get()/.run()
+const db = {
+  exec: (sql: string) => {
+    raw.exec(sql);
+    persist();
+  },
+  prepare: (sql: string) => ({
+    get: (...params: any[]): any => {
+      const st = raw.prepare(sql);
+      try {
+        st.bind(params);
+        return st.step() ? st.getAsObject() : undefined;
+      } finally {
+        st.free();
+      }
+    },
+    all: (...params: any[]): any[] => {
+      const st = raw.prepare(sql);
+      try {
+        st.bind(params);
+        const rows: any[] = [];
+        while (st.step()) rows.push(st.getAsObject());
+        return rows;
+      } finally {
+        st.free();
+      }
+    },
+    run: (...params: any[]) => {
+      raw.run(sql, params);
+      const lastInsertRowid = Number(raw.exec('SELECT last_insert_rowid()')[0]?.values[0][0] ?? 0);
+      persist();
+      return { lastInsertRowid };
+    },
+  }),
+};
 
 db.exec(`
-  PRAGMA journal_mode = WAL;
-  PRAGMA foreign_keys = ON;
-
   -- Customer accounts
   CREATE TABLE IF NOT EXISTS users (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,6 +86,15 @@ db.exec(`
     number        TEXT NOT NULL,
     password_hash TEXT NOT NULL,
     created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS orders (
+    id           TEXT PRIMARY KEY,
+    account_role TEXT NOT NULL,
+    account_id   INTEGER NOT NULL,
+    status       TEXT NOT NULL,
+    created_at   INTEGER NOT NULL,
+    data         TEXT NOT NULL
   );
 
   CREATE TABLE IF NOT EXISTS sessions (
@@ -285,6 +329,115 @@ app.post('/api/auth/logout', (req, res) => {
   const token = readCookie(req, COOKIE_NAME);
   if (token) db.prepare('DELETE FROM sessions WHERE token_hash = ?').run(sha256(token));
   res.clearCookie(COOKIE_NAME, { path: '/' });
+  res.json({ ok: true });
+});
+
+
+/* -------------------------------------------------------------------------- */
+/*  Orders                                                                     */
+/* -------------------------------------------------------------------------- */
+const STATUSES = ['Received', 'Kitchen', 'Seared', 'Delivery', 'Delivered'];
+const menuById = new Map([...fullMenu, ...seasonalSpecials].map((i) => [i.id, i]));
+
+function requireAuth(req: Request, res: Response, next: NextFunction) {
+  const user = getSessionUser(req);
+  if (!user) return res.status(401).json({ error: 'Please sign in.' });
+  res.locals.user = user;
+  next();
+}
+
+const rowToOrder = (row: any) => ({ ...JSON.parse(row.data), status: row.status });
+
+// Customers see their own orders; the admin sees every order (Kitchen KDS).
+app.get('/api/orders', requireAuth, (_req, res) => {
+  const user = res.locals.user as SessionUser;
+  const rows =
+    user.role === 'admin'
+      ? db.prepare('SELECT * FROM orders ORDER BY created_at DESC').all()
+      : db
+          .prepare("SELECT * FROM orders WHERE account_role = 'user' AND account_id = ? ORDER BY created_at DESC")
+          .all(user.id);
+  res.json({ orders: rows.map(rowToOrder) });
+});
+
+app.post('/api/orders', requireAuth, (req, res) => {
+  const user = res.locals.user as SessionUser;
+  const b = req.body ?? {};
+  const customerName = str(b.customerName).slice(0, 100);
+  const email = user.email; // taken from the signed-in account, not typed at checkout
+  const phone = str(b.phone).slice(0, 30);
+  const deliveryAddress = str(b.deliveryAddress).slice(0, 300);
+  const paymentMethod = ['card', 'applepay', 'cash'].includes(b.paymentMethod) ? b.paymentMethod : null;
+
+  if (!customerName || !phone || !deliveryAddress) return res.status(400).json({ error: 'Please fill in your name, phone and delivery address.' });
+  if (!paymentMethod) return res.status(400).json({ error: 'Please choose a payment method.' });
+  if (!Array.isArray(b.items) || b.items.length === 0 || b.items.length > 50) return res.status(400).json({ error: 'Your cart is empty.' });
+
+  // Prices always come from the menu on the server, never from the browser.
+  const items: any[] = [];
+  let subtotal = 0;
+  for (const it of b.items) {
+    const menuItem = menuById.get(String(it?.sushiItem?.id));
+    const quantity = Number(it?.quantity);
+    if (!menuItem || !Number.isInteger(quantity) || quantity < 1 || quantity > 50) {
+      return res.status(400).json({ error: 'One of the items in your cart is no longer available.' });
+    }
+    const o = it.options ?? {};
+    items.push({
+      cartItemId: str(it.cartItemId).slice(0, 80) || `${menuItem.id}-${Date.now()}`,
+      sushiItem: menuItem,
+      quantity,
+      options: {
+        spiciness: ['Mild', 'Medium', 'Signature Hot'].includes(o.spiciness) ? o.spiciness : 'Mild',
+        extraWasabi: !!o.extraWasabi,
+        extraGinger: !!o.extraGinger,
+        riceType: o.riceType === 'Organic Brown' ? 'Organic Brown' : 'Traditional White',
+        notes: str(o.notes).slice(0, 300),
+      },
+    });
+    subtotal += menuItem.price * quantity;
+  }
+  const discount = Number(b.discount) > 0 ? subtotal * 0.2 : 0; // MOORI20 is the only promo code
+  const deliveryFee = subtotal >= 500 ? 0 : 50;
+  const total = Math.max(0, subtotal - discount + deliveryFee);
+
+  let id = '';
+  do {
+    id = `MOORI-${crypto.randomInt(100000, 1000000)}`;
+  } while (db.prepare('SELECT 1 FROM orders WHERE id = ?').get(id));
+
+  const now = Date.now();
+  const order = {
+    id,
+    createdAt: new Date(now).toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' }),
+    createdAtMs: now,
+    items,
+    subtotal,
+    discount,
+    deliveryFee,
+    total,
+    status: 'Received',
+    customerName,
+    email,
+    phone,
+    deliveryAddress,
+    paymentMethod,
+    estimatedMinutes: 35,
+  };
+  db.prepare('INSERT INTO orders (id, account_role, account_id, status, created_at, data) VALUES (?, ?, ?, ?, ?, ?)').run(
+    id, user.role, user.id, 'Received', now, JSON.stringify(order),
+  );
+  res.status(201).json({ order });
+});
+
+// Only the admin (kitchen) can move an order along.
+app.patch('/api/orders/:id/status', requireAuth, (req, res) => {
+  const user = res.locals.user as SessionUser;
+  if (user.role !== 'admin') return res.status(403).json({ error: 'Not allowed.' });
+  const status = str(req.body?.status);
+  if (!STATUSES.includes(status)) return res.status(400).json({ error: 'Invalid status.' });
+  if (!db.prepare('SELECT 1 FROM orders WHERE id = ?').get(req.params.id)) return res.status(404).json({ error: 'Order not found.' });
+  db.prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, req.params.id);
   res.json({ ok: true });
 });
 
