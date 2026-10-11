@@ -43,11 +43,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 Seasonal Specials
               </button>
             </li>
-            <li>
-              <button onClick={() => onNavigate('kitchen')} className="hover:text-[#bc001f] transition-colors">
-                Kitchen KDS Console
-              </button>
-            </li>
           </ul>
         </div>
 
