@@ -101,14 +101,6 @@ export const OrderTrackerModal: React.FC<OrderTrackerModalProps> = ({
                 Delivering to: <strong className="text-[#1a1c1c]">{order.deliveryAddress}</strong>
               </p>
             </div>
-
-            <button
-              onClick={handleAdvanceStatus}
-              className="bg-[#1a1c1c] text-white font-mono-caps text-[11px] px-4 py-2.5 hover:bg-[#bc001f] transition-colors flex items-center gap-1.5"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Advance Status (Sim)</span>
-            </button>
           </div>
 
           {/* Progress Timeline Bar */}

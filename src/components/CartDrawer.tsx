@@ -32,11 +32,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
   const handleApplyPromo = (e: React.FormEvent) => {
     e.preventDefault();
-    if (promoInput.trim().toUpperCase() === 'NURI20') {
+    if (promoInput.trim().toUpperCase() === 'MOORI20') {
       setPromoApplied(true);
       setPromoError('');
     } else {
-      setPromoError('Invalid code. Try "NURI20" for 20% off.');
+      setPromoError('Invalid code. Try "MOORI20" for 20% off.');
     }
   };
 
@@ -139,7 +139,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     type="text"
                     value={promoInput}
                     onChange={(e) => setPromoInput(e.target.value)}
-                    placeholder="PROMO CODE (NURI20)"
+                    placeholder="PROMO CODE (MOORI20)"
                     className="w-full pl-8 pr-3 py-2 bg-white border border-gray-200 text-xs font-mono focus:outline-none focus:border-[#bc001f]"
                   />
                 </div>
@@ -153,7 +153,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
               {promoApplied && (
                 <p className="text-xs font-mono text-emerald-700 bg-emerald-50 p-2 border border-emerald-200">
-                  ✓ Code NURI20 applied! 20% discount added.
+                  ✓ Code MOORI20 applied! 20% discount added.
                 </p>
               )}
               {promoError && (

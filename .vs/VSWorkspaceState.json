@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\src",
+    "\\src\\components"
   ],
-  "SelectedNode": "\\vite.config.ts",
+  "SelectedNode": "\\src\\components\\OrderTrackerModal.tsx",
   "PreviewInSolutionExplorer": false
 }

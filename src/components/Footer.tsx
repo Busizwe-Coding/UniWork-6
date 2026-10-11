@@ -12,7 +12,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         {/* Brand & Mission */}
         <div className="space-y-4">
           <div className="text-2xl font-extrabold text-[#bc001f] tracking-tight font-display">
-            Nuri Sushi
+            Moori Sushi
           </div>
           <p className="font-body text-xs text-[#5f5e5e] leading-relaxed">
             Bringing the precision of traditional sushi craft to the modern digital era. Quality first, always.
@@ -46,11 +46,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <li>
               <button onClick={() => onNavigate('kitchen')} className="hover:text-[#bc001f] transition-colors">
                 Kitchen KDS Console
-              </button>
-            </li>
-            <li>
-              <button onClick={() => onNavigate('csharp')} className="hover:text-[#bc001f] transition-colors font-bold text-[#1a1c1c]">
-                Visual Studio C# Solution
               </button>
             </li>
           </ul>
@@ -89,23 +84,23 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <address className="not-italic font-body text-xs text-[#5f5e5e] space-y-2">
             <p className="flex items-center gap-2">
               <MapPin className="w-3.5 h-3.5 text-[#bc001f]" />
-              <span>888 Ginza District, Tokyo, Japan</span>
+              <span>888 Ginza District, CT, South Africa</span>
             </p>
             <p className="flex items-center gap-2">
               <Mail className="w-3.5 h-3.5 text-[#bc001f]" />
-              <span>contact@nuri-sushi.com</span>
+              <span>contact@moorisushi.com</span>
             </p>
             <p className="flex items-center gap-2">
               <Phone className="w-3.5 h-3.5 text-[#bc001f]" />
-              <span>+81 03-1234-5678</span>
+              <span>+27 77 898 3456</span>
             </p>
           </address>
         </div>
       </div>
 
       <div className="max-w-[1280px] mx-auto px-6 flex flex-col sm:flex-row justify-between items-center pt-8 border-t border-[#e7bcb9] text-[11px] font-mono text-[#5f5e5e]">
-        <p>© 2026 NURI SUSHI. ALL RIGHTS RESERVED.</p>
-        <p>DESIGNED FOR CULINARY PRECISION & VISUAL STUDIO C# INTEGRATION.</p>
+        <p>© 2026 MOORI SUSHI. ALL RIGHTS RESERVED.</p>
+        <p>DESIGNED FOR CULINARY SCHOOL.</p>
       </div>
     </footer>
   );

@@ -69,9 +69,9 @@ export const CustomerSupportSystem: React.FC<CustomerSupportSystemProps> = ({
 
   // New Complaint Form State
   const [orderId, setOrderId] = useState<string>(initialOrderId || (orders[0]?.id ? orders[0].id : ''));
-  const [customerName, setCustomerName] = useState<string>('Kenji Sato');
-  const [email, setEmail] = useState<string>('kenji@ginza-tokyo.jp');
-  const [phone, setPhone] = useState<string>('+81 90-1234-5678');
+  const [customerName, setCustomerName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
   const [category, setCategory] = useState<ComplaintCategory>('Food Quality & Freshness');
   const [severity, setSeverity] = useState<ComplaintSeverity>('Medium');
   const [desiredResolution, setDesiredResolution] = useState<DesiredResolution>('Replacement Delivery');
@@ -747,7 +747,7 @@ export const CustomerSupportSystem: React.FC<CustomerSupportSystemProps> = ({
                 For immediate live dietary or critical allergy alerts during active delivery:
               </p>
               <div className="text-white font-bold text-sm bg-white/10 p-2.5 text-center">
-                +81 03-1234-5678 (Ext 1 — Priority)
+                +27 77 898 3456 (Priority)
               </div>
             </div>
           </div>

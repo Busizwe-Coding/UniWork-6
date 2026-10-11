@@ -19,10 +19,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const [name, setName] = useState('Sizwe M.');
-  const [email, setEmail] = useState('contact@nuri-sushi.com');
-  const [phone, setPhone] = useState('+81 03-1234-5678');
-  const [address, setAddress] = useState('888 Ginza District, Chuo City, Tokyo 104-0061');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'applepay' | 'cash'>('card');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,7 +36,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
     setTimeout(() => {
       const newOrder: Order = {
-        id: `NURI-${Math.floor(100000 + Math.random() * 900000)}`,
+        id: `MOORI-${Math.floor(100000 + Math.random() * 900000)}`,
         createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         items: [...cart],
         subtotal,

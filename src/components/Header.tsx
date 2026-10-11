@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={() => setActiveTab('home')} 
             className="text-2xl font-extrabold text-[#bc001f] tracking-tight font-display hover:opacity-90 transition-opacity"
           >
-            Nuri Sushi
+            Moori Sushi
           </button>
           
           <nav className="hidden md:flex gap-6 items-center">
