@@ -36,7 +36,7 @@
               "RelativeDocumentMoniker": "src\\components\\CheckoutModal.tsx",
               "ToolTip": "C:\\Users\\me\\Downloads\\nuri-ui-builder3\\src\\components\\CheckoutModal.tsx",
               "RelativeToolTip": "src\\components\\CheckoutModal.tsx",
-              "ViewState": "AgIAACAAAAAAAAAAAAAAwDAAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADAAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
               "WhenOpened": "2026-10-11T18:43:55.527Z",
               "EditorCaption": ""
@@ -51,8 +51,7 @@
               "RelativeToolTip": "server.ts",
               "ViewState": "AgIAAF8BAAAAAAAAAAAIwHUBAABVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-10-11T18:39:32.912Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-11T18:39:32.912Z"
             }
           ]
         }

@@ -233,6 +233,11 @@ app.get('/api/auth/config', (_req, res) => {
   res.json({ googleClientId: GOOGLE_CLIENT_ID || null });
 });
 
+// Public menu (used by the Android app so the menu lives in one place)
+app.get('/api/menu', (_req, res) => {
+  res.json({ seasonal: seasonalSpecials, full: fullMenu });
+});
+
 app.get('/api/auth/me', (req, res) => {
   const user = getSessionUser(req);
   res.json({ user });
